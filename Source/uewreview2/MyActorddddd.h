@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "MyActorddddd.generated.h"
 
+
 UCLASS()
 class UEWREVIEW2_API AMyActorddddd : public AActor
 {
@@ -14,6 +15,8 @@ class UEWREVIEW2_API AMyActorddddd : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AMyActorddddd();
+	//hello
+
 
 protected:
 	// Called when the game starts or when spawned
