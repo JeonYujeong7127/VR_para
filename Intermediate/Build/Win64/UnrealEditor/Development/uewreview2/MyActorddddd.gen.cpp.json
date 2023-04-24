@@ -1,0 +1,15 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\users\\wlsdn\\unrealfile\\unreal projects\\uewreview2\\intermediate\\build\\win64\\unrealeditor\\inc\\uewreview2\\myactorddddd.gen.cpp",
+        "ProvidedModule": "",
+        "PCH": "c:\\users\\wlsdn\\unrealfile\\unreal projects\\uewreview2\\intermediate\\build\\win64\\uewreview2editor\\development\\engine\\sharedpch.engine.shadowerrors.h.pch",
+        "Includes": [
+            "c:\\users\\wlsdn\\unrealfile\\unreal projects\\uewreview2\\intermediate\\build\\win64\\unrealeditor\\development\\uewreview2\\definitions.uewreview2.h",
+            "c:\\users\\wlsdn\\unrealfile\\unreal projects\\uewreview2\\source\\uewreview2\\myactorddddd.h",
+            "c:\\users\\wlsdn\\unrealfile\\unreal projects\\uewreview2\\intermediate\\build\\win64\\unrealeditor\\inc\\uewreview2\\myactorddddd.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}
