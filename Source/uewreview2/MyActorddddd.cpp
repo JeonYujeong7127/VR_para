@@ -15,7 +15,6 @@ AMyActorddddd::AMyActorddddd()
 void AMyActorddddd::BeginPlay()
 {
 	Super::BeginPlay();
-	ABLOG_S(Warning);
 	//hello
 	//hello2
 	//hello3
