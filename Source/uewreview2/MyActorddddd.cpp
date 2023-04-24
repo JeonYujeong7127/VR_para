@@ -18,6 +18,7 @@ void AMyActorddddd::BeginPlay()
 	ABLOG_S(Warning);
 	//hello
 	//hello2
+	//hello3
 }
 
 // Called every frame
