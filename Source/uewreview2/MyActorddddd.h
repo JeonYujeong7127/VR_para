@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "uewreview2.h"
 #include "GameFramework/Actor.h"
 #include "MyActorddddd.generated.h"
 

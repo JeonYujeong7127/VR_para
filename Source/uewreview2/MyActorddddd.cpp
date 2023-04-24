@@ -15,7 +15,7 @@ AMyActorddddd::AMyActorddddd()
 void AMyActorddddd::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	ABLOG_S(Warning);
 }
 
 // Called every frame
