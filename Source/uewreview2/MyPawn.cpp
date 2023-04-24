@@ -34,18 +34,27 @@ AMyPawn::AMyPawn()
 	}
 
 
+	mesh->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+	static ConstructorHelpers::FClassFinder<UAnimInstance> WARRIOR_ANIM(TEXT("AnimBlueprint'/Game/Book/animation/WarriorAnimBlueprint.WarriorAnimBlueprint_C'"));
+	if (WARRIOR_ANIM.Succeeded())
+	{
+		mesh->SetAnimInstanceClass(WARRIOR_ANIM.Class);
+	}
+
+
+
 }
 
 // Called when the game starts or when spawned
 void AMyPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	mesh->SetAnimationMode(EAnimationMode::AnimationSingleNode);
-	UAnimationAsset* AnimAsset = LoadObject<UAnimationAsset>(nullptr, TEXT("AnimSequence'/Game/Book/animation/WarriorRun.WarriorRun'"));
-	if (AnimAsset != nullptr)
-	{
-		mesh->PlayAnimation(AnimAsset, true);
-	}
+	//mesh->SetAnimationMode(EAnimationMode::AnimationSingleNode);
+	//UAnimationAsset* AnimAsset = LoadObject<UAnimationAsset>(nullptr, TEXT("AnimSequence'/Game/Book/animation/WarriorRun.WarriorRun'"));
+	//if (AnimAsset != nullptr)
+	//{
+	//	mesh->PlayAnimation(AnimAsset, true);
+	//}
 	
 }
 
