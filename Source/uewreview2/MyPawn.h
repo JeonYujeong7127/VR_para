@@ -4,6 +4,7 @@
 
 #include "uewreview2.h"
 #include "GameFramework/Pawn.h"
+#include "GameFramework/FloatingPawnMovement.h"
 #include "MyPawn.generated.h"
 
 UCLASS()
@@ -28,5 +29,21 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UPROPERTY(VisibleAnywhere, Category = Collision)
+		UCapsuleComponent* capsule;
+	UPROPERTY(VisibleAnywhere, Category = Visual)
+		USkeletalMeshComponent* mesh;
+	UPROPERTY(VisibleAnywhere, Category = movement)
+		UFloatingPawnMovement* movement;
+	UPROPERTY(VisibleAnywhere, Category = SpringArm)
+		USpringArmComponent* springArm;
+	UPROPERTY(VisibleAnywhere, Category = Camera)
+		UCameraComponent* camera;
+
+	
+private:
+	void UpDown(float NewAxisValue);
+	void LeftRight(float NewAxisValue);
 
 };
