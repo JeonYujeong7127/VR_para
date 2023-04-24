@@ -16,6 +16,22 @@
 # Mono auto generated files
 mono_crash.*
 
+
+Binaries
+DerivedDataCache
+Intermediate
+Saved
+.vscode
+.vs
+*.VC.db
+*.opensdf
+*.opendb
+*.sdf
+*.sln
+*.suo
+*.xcodeproj
+*.xcworkspace
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
