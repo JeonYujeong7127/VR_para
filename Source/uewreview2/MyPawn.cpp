@@ -40,6 +40,12 @@ AMyPawn::AMyPawn()
 void AMyPawn::BeginPlay()
 {
 	Super::BeginPlay();
+	mesh->SetAnimationMode(EAnimationMode::AnimationSingleNode);
+	UAnimationAsset* AnimAsset = LoadObject<UAnimationAsset>(nullptr, TEXT("AnimSequence'/Game/Book/animation/WarriorRun.WarriorRun'"));
+	if (AnimAsset != nullptr)
+	{
+		mesh->PlayAnimation(AnimAsset, true);
+	}
 	
 }
 
