@@ -17,10 +17,10 @@
 mono_crash.*
 
 
-Binaries
-DerivedDataCache
-Intermediate
-Saved
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
 .vscode
 .vs
 *.VC.db
