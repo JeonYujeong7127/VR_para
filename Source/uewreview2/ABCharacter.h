@@ -23,6 +23,7 @@ protected:
 	{
 		GTA,
 		DIABLO,
+		GLIDER,
 	};
 
 
@@ -49,6 +50,10 @@ public:
 		USpringArmComponent* springArm;
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 		UCameraComponent* camera;
+	UPROPERTY(VisibleAnywhere, Category = Glider)
+		UStaticMeshComponent* glider;
+	UPROPERTY(VisibleAnywhere, Category = Light)
+		UPointLightComponent* light;
 
 
 private:

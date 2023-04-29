@@ -11,31 +11,50 @@ AABCharacter::AABCharacter()
 
 	springArm = CreateDefaultSubobject< USpringArmComponent>(TEXT("SPRINGARM"));
 	camera = CreateDefaultSubobject< UCameraComponent>(TEXT("CAMERA"));
+	glider = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GLIDER"));
+	light = CreateDefaultSubobject<UPointLightComponent>(TEXT("LIGHT"));
 
 	springArm->SetupAttachment(GetCapsuleComponent());
 	camera->SetupAttachment(springArm);
+	glider->SetupAttachment(GetCapsuleComponent());
+	light->SetupAttachment(GetCapsuleComponent());
+	light->SetLightBrightness(50);
 
-	GetMesh()->SetRelativeLocationAndRotation(FVector(.0f, 0.0f, -88.0f), FRotator(0.0f, -90.0f, 0.0f));
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_BODY(TEXT("StaticMesh'/Game/Book/glider/Hang_gliding_3.Hang_gliding_3'"));
+	if (SM_BODY.Succeeded())
+	{
+		glider->SetStaticMesh(SM_BODY.Object);
+	}
+	// 카메라 위치
 	springArm->TargetArmLength = 400.0f;
-	springArm->SetRelativeRotation(FRotator(100.f, 100.0f, 100.0f));
+	springArm->SetRelativeRotation(FRotator(0,0,0));
 	springArm->SetRelativeLocation(ArmLocation);
-
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_CARDBOARD(TEXT("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_Cardboard.SK_CharM_Cardboard'"));
-	if (SK_CARDBOARD.Succeeded())
-	{
-		GetMesh()->SetSkeletalMesh(SK_CARDBOARD.Object);
-	}
+	// 글라이더 작업
+	glider->SetRelativeLocation(FVector(30, 0.f, 170.f));
+	glider->SetRelativeRotation(FRotator(0,-90,30));
+	light->SetRelativeLocation(FVector(0.f, 0.f, 50.f));
 
 
-	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	static ConstructorHelpers::FClassFinder<UAnimInstance> WARRIOR_ANIM(TEXT("AnimBlueprint'/Game/Book/animation/WarriorAnimBlueprint.WarriorAnimBlueprint_C'"));
-	if (WARRIOR_ANIM.Succeeded())
-	{
-		GetMesh()->SetAnimInstanceClass(WARRIOR_ANIM.Class);
-	}
+	/////////////
+	GetMesh()->SetRelativeLocationAndRotation(FVector(.0f, 0.0f, -88.0f), FRotator(0.0f, -90.0f, 0.0f));
+	//static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_CARDBOARD(TEXT("SkeletalMesh'/Game/Book/animation/ds.ds'"));
+	//if (SK_CARDBOARD.Succeeded())
+	//{
+	//	ABLOG(Warning, TEXT("why dont "));
+	//	GetMesh()->SetSkeletalMesh(SK_CARDBOARD.Object);
+	//}
 
 
-	SetControlMode((int32)EControlMode::GTA);
+	//GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+	//static ConstructorHelpers::FClassFinder<UAnimInstance> WARRIOR_ANIM(TEXT("AnimBlueprint'/Game/Book/animation/ds_Skeleton_AnimBlueprint1.ds_Skeleton_AnimBlueprint1_C'"));
+	//if (WARRIOR_ANIM.Succeeded())
+	//{
+	//	GetMesh()->SetAnimInstanceClass(WARRIOR_ANIM.Class);
+	//}
+
+
+	SetControlMode((int32)EControlMode::GLIDER);
 
 	ArmLengthSpeed = 3.0f;
 	ArmRotationSpeed = 10.f;
@@ -57,14 +76,29 @@ void AABCharacter::SetControlMode(int32 ControlMode)
 		//springArm->SetRelativeRotation(FRotator::ZeroRotator);
 		ArmLengthTo = 100.f;
 		springArm->bUsePawnControlRotation = true;
-		springArm->bInheritPitch = true;
-		springArm->bInheritRoll = true;
-		springArm->bInheritYaw = true;
+		springArm->bInheritPitch = false;
+		springArm->bInheritRoll = false;
+		springArm->bInheritYaw = false;
 		springArm->bDoCollisionTest = true;
 		bUseControllerRotationYaw = false;
 		GetCharacterMovement()->bOrientRotationToMovement = false;
-		GetCharacterMovement()->bUseControllerDesiredRotation = true;
+		GetCharacterMovement()->bUseControllerDesiredRotation = false;
 		GetCharacterMovement()->RotationRate = FRotator(0.f, 720.f, 0.f);
+	}
+	else if ((int32)EControlMode::GLIDER == CurrentControlMode)
+	{
+		ArmLengthTo = 0.f;
+		springArm->bUsePawnControlRotation = true;
+		springArm->bInheritPitch = true;
+		springArm->bInheritRoll = false;
+		springArm->bInheritYaw = true;
+		springArm->bDoCollisionTest = false;
+		bUseControllerRotationYaw = false;
+		bUseControllerRotationPitch = false;
+		GetCharacterMovement()->bOrientRotationToMovement = false;
+		GetCharacterMovement()->bUseControllerDesiredRotation = false;
+		GetCharacterMovement()->RotationRate = FRotator(0.f, 720.f, 0.f);
+
 	}
 	else
 	{
@@ -138,6 +172,11 @@ void AABCharacter::UpDown(float NewAxisValue)
 	{
 		DirectionToMove.X = NewAxisValue;
 	}
+	else
+	{
+		AddMovementInput(GetActorForwardVector(), NewAxisValue);
+
+	}
 }
 
 void AABCharacter::LeftRight(float NewAxisValue)
@@ -153,6 +192,11 @@ void AABCharacter::LeftRight(float NewAxisValue)
 	{
 		DirectionToMove.Y = NewAxisValue;
 	}
+	else
+	{
+
+		AddMovementInput(GetActorRightVector(), NewAxisValue);
+	}
 
 }
 
@@ -162,7 +206,7 @@ void AABCharacter::LookUp(float NewAxisValue)
 {
 	//AddControllerPitchInput(-NewAxisValue);
 
-	if (CurrentControlMode == (int32)EControlMode::GTA)
+	if (CurrentControlMode != (int32)EControlMode::DIABLO)
 	{
 		AddControllerPitchInput(-NewAxisValue);
 	}
@@ -176,10 +220,16 @@ void AABCharacter::ViewChange()
 		GetController()->SetControlRotation(GetActorRotation());
 		CurrentControlMode = (int32)EControlMode::DIABLO;
 	}
+	else if(CurrentControlMode == (int32)EControlMode::DIABLO)
+	{
+		GetController()->SetControlRotation(springArm->GetRelativeRotation());
+		CurrentControlMode = (int32)EControlMode::GLIDER;
+	}
 	else
 	{
 		GetController()->SetControlRotation(springArm->GetRelativeRotation());
 		CurrentControlMode = (int32)EControlMode::GTA;
+
 	}
 
 	//이런것도 있는데 뭐... 알면 좋고몰라도 ㄱㅊ
@@ -190,7 +240,7 @@ void AABCharacter::ViewChange()
 void AABCharacter::Turn(float NewAxisValue)
 {
 	//AddControllerYawInput(NewAxisValue);
-	if (CurrentControlMode == (int32)EControlMode::GTA)
+	if (CurrentControlMode != (int32)EControlMode::DIABLO)
 	{
 		AddControllerYawInput(NewAxisValue);
 	}
