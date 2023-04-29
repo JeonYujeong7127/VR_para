@@ -56,8 +56,6 @@ AABCharacter::AABCharacter()
 
 	SetControlMode((int32)EControlMode::GLIDER);
 
-	ArmLengthSpeed = 3.0f;
-	ArmRotationSpeed = 10.f;
 }
 
 // Called when the game starts or when spawned
@@ -95,9 +93,9 @@ void AABCharacter::SetControlMode(int32 ControlMode)
 		springArm->bDoCollisionTest = false;
 		bUseControllerRotationYaw = false;
 		bUseControllerRotationPitch = false;
-		GetCharacterMovement()->bOrientRotationToMovement = false;
+		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetCharacterMovement()->bUseControllerDesiredRotation = false;
-		GetCharacterMovement()->RotationRate = FRotator(0.f, 720.f, 0.f);
+		GetCharacterMovement()->RotationRate = FRotator(0.f, 60.f, 0.f);
 
 	}
 	else
@@ -174,7 +172,9 @@ void AABCharacter::UpDown(float NewAxisValue)
 	}
 	else
 	{
-		AddMovementInput(GetActorForwardVector(), NewAxisValue);
+		if(NewAxisValue >0)
+		AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::X), NewAxisValue);
+		//AddMovementInput(GetActorForwardVector(), NewAxisValue);
 
 	}
 }
@@ -239,9 +239,17 @@ void AABCharacter::ViewChange()
 
 void AABCharacter::Turn(float NewAxisValue)
 {
+	static float Ayaw = 0.f;
 	//AddControllerYawInput(NewAxisValue);
 	if (CurrentControlMode != (int32)EControlMode::DIABLO)
 	{
-		AddControllerYawInput(NewAxisValue);
+		Ayaw = abs(GetActorRotation().Yaw - (GetControlRotation().Yaw + NewAxisValue));
+
+		if ( Ayaw<90 || 270 < Ayaw )
+		{
+			AddControllerYawInput(NewAxisValue);
+		}
+
+
 	}
 }
