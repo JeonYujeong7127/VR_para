@@ -34,8 +34,10 @@ AABCharacter::AABCharacter()
 	}
 
 
-	SetControlMode(EControlMode::DIABLO);
+	SetControlMode(EControlMode::GTA);
 
+	ArmLengthSpeed = 3.0f;
+	ArmRotationSpeed = 10.f;
 }
 
 // Called when the game starts or when spawned
@@ -50,8 +52,9 @@ void AABCharacter::SetControlMode(EControlMode ControlMode)
 	CurrentControlMode = ControlMode;
 	if (EControlMode::GTA == CurrentControlMode)
 	{
-		springArm->TargetArmLength = 450.f;
-		springArm->SetRelativeRotation(FRotator::ZeroRotator);
+		//springArm->TargetArmLength = 450.f;
+		//springArm->SetRelativeRotation(FRotator::ZeroRotator);
+		ArmLengthTo = 450.f;
 		springArm->bUsePawnControlRotation = true;
 		springArm->bInheritPitch = true;
 		springArm->bInheritRoll = true;
@@ -64,8 +67,10 @@ void AABCharacter::SetControlMode(EControlMode ControlMode)
 	}
 	else
 	{
-		springArm->TargetArmLength = 800.f;
-		springArm->SetRelativeRotation(FRotator(-45.f, 0.f, 0.f));
+		//springArm->TargetArmLength = 800.f;
+		//springArm->SetRelativeRotation(FRotator(-45.f, 0.f, 0.f));
+		ArmLengthTo = 800.f;
+		ArmRotationTo = FRotator(-45.f,0.f, 0.f);
 		springArm->bUsePawnControlRotation = false;
 		//위 애를 false 시켜놓아서 밑에 애들은 사실 영향 안받음
 		//근데 그냥 해놓는게 국룰이라 글케한듯
@@ -90,9 +95,12 @@ void AABCharacter::SetControlMode(EControlMode ControlMode)
 // Called every frame
 void AABCharacter::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	Super::Tick(DeltaTime);	
+	springArm->TargetArmLength = FMath::FInterpTo(springArm->TargetArmLength, ArmLengthTo, DeltaTime, ArmLengthSpeed);
+
 	if (CurrentControlMode == EControlMode::DIABLO)
 	{
+		springArm->SetRelativeRotation(FMath::RInterpTo(springArm->GetRelativeRotation(), ArmRotationTo, DeltaTime, ArmLengthSpeed));
 		if (DirectionToMove.SizeSquared() > 0.f)
 		{
 			GetController()->SetControlRotation(FRotationMatrix::MakeFromX(DirectionToMove).Rotator());
@@ -164,10 +172,12 @@ void AABCharacter::ViewChange()
 {
 	if (CurrentControlMode == EControlMode::GTA)
 	{
+		GetController()->SetControlRotation(GetActorRotation());
 		CurrentControlMode = EControlMode::DIABLO;
 	}
 	else
 	{
+		GetController()->SetControlRotation(springArm->GetRelativeRotation());
 		CurrentControlMode = EControlMode::GTA;
 	}
 
