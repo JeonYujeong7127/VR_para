@@ -26,15 +26,17 @@ protected:
 	};
 
 
-	void SetControlMode(EControlMode mode);
-		
-	EControlMode CurrentControlMode = EControlMode::GTA;
+	void SetControlMode(int32 mode);
+
+	UPROPERTY(EditAnywhere, Category = Mode)
+		int32 CurrentControlMode;
 	FVector DirectionToMove = FVector::ZeroVector;
 
 	float ArmLengthTo = 0.0f;
 	FRotator ArmRotationTo = FRotator::ZeroRotator;
 	float ArmLengthSpeed = 0.0f;
 	float ArmRotationSpeed = 0.0f;
+	FVector ArmLocation = FVector(50.f,0,100.f);
 
 public:	
 	// Called every frame

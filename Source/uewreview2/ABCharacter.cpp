@@ -17,7 +17,8 @@ AABCharacter::AABCharacter()
 
 	GetMesh()->SetRelativeLocationAndRotation(FVector(.0f, 0.0f, -88.0f), FRotator(0.0f, -90.0f, 0.0f));
 	springArm->TargetArmLength = 400.0f;
-	springArm->SetRelativeRotation(FRotator(-15.0f, 0.0f, 0.0f));
+	springArm->SetRelativeRotation(FRotator(100.f, 100.0f, 100.0f));
+	springArm->SetRelativeLocation(ArmLocation);
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_CARDBOARD(TEXT("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_Cardboard.SK_CharM_Cardboard'"));
 	if (SK_CARDBOARD.Succeeded())
@@ -34,7 +35,7 @@ AABCharacter::AABCharacter()
 	}
 
 
-	SetControlMode(EControlMode::GTA);
+	SetControlMode((int32)EControlMode::GTA);
 
 	ArmLengthSpeed = 3.0f;
 	ArmRotationSpeed = 10.f;
@@ -47,22 +48,22 @@ void AABCharacter::BeginPlay()
 	
 }
 
-void AABCharacter::SetControlMode(EControlMode ControlMode)
+void AABCharacter::SetControlMode(int32 ControlMode)
 {
 	CurrentControlMode = ControlMode;
-	if (EControlMode::GTA == CurrentControlMode)
+	if ((int32)EControlMode::GTA == CurrentControlMode)
 	{
 		//springArm->TargetArmLength = 450.f;
 		//springArm->SetRelativeRotation(FRotator::ZeroRotator);
-		ArmLengthTo = 450.f;
+		ArmLengthTo = 100.f;
 		springArm->bUsePawnControlRotation = true;
 		springArm->bInheritPitch = true;
 		springArm->bInheritRoll = true;
 		springArm->bInheritYaw = true;
 		springArm->bDoCollisionTest = true;
 		bUseControllerRotationYaw = false;
-		GetCharacterMovement()->bOrientRotationToMovement = true;
-		GetCharacterMovement()->bUseControllerDesiredRotation = false;
+		GetCharacterMovement()->bOrientRotationToMovement = false;
+		GetCharacterMovement()->bUseControllerDesiredRotation = true;
 		GetCharacterMovement()->RotationRate = FRotator(0.f, 720.f, 0.f);
 	}
 	else
@@ -98,7 +99,7 @@ void AABCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);	
 	springArm->TargetArmLength = FMath::FInterpTo(springArm->TargetArmLength, ArmLengthTo, DeltaTime, ArmLengthSpeed);
 
-	if (CurrentControlMode == EControlMode::DIABLO)
+	if (CurrentControlMode == (int32)EControlMode::DIABLO)
 	{
 		springArm->SetRelativeRotation(FMath::RInterpTo(springArm->GetRelativeRotation(), ArmRotationTo, DeltaTime, ArmLengthSpeed));
 		if (DirectionToMove.SizeSquared() > 0.f)
@@ -129,11 +130,11 @@ void AABCharacter::UpDown(float NewAxisValue)
 	//AddMovementInput(GetActorForwardVector(), NewAxisValue);
 	//AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::X), NewAxisValue);
 
-	if (CurrentControlMode == EControlMode::GTA)
+	if (CurrentControlMode == (int32)EControlMode::GTA)
 	{
 		AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::X), NewAxisValue);
 	}
-	else if (CurrentControlMode == EControlMode::DIABLO)
+	else if (CurrentControlMode == (int32)EControlMode::DIABLO)
 	{
 		DirectionToMove.X = NewAxisValue;
 	}
@@ -144,11 +145,11 @@ void AABCharacter::LeftRight(float NewAxisValue)
 	//ABLOG(Warning, TEXT("pawn LeftRight %f"), NewAxisValue);
 	//AddMovementInput(GetActorRightVector(), NewAxisValue);
 	//AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::Y), NewAxisValue);
-	if (CurrentControlMode == EControlMode::GTA)
+	if (CurrentControlMode == (int32)EControlMode::GTA)
 	{
 		AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::Y), NewAxisValue);
 	}
-	else if (CurrentControlMode == EControlMode::DIABLO)
+	else if (CurrentControlMode == (int32)EControlMode::DIABLO)
 	{
 		DirectionToMove.Y = NewAxisValue;
 	}
@@ -161,7 +162,7 @@ void AABCharacter::LookUp(float NewAxisValue)
 {
 	//AddControllerPitchInput(-NewAxisValue);
 
-	if (CurrentControlMode == EControlMode::GTA)
+	if (CurrentControlMode == (int32)EControlMode::GTA)
 	{
 		AddControllerPitchInput(-NewAxisValue);
 	}
@@ -170,15 +171,15 @@ void AABCharacter::LookUp(float NewAxisValue)
 
 void AABCharacter::ViewChange()
 {
-	if (CurrentControlMode == EControlMode::GTA)
+	if (CurrentControlMode == (int32)EControlMode::GTA)
 	{
 		GetController()->SetControlRotation(GetActorRotation());
-		CurrentControlMode = EControlMode::DIABLO;
+		CurrentControlMode = (int32)EControlMode::DIABLO;
 	}
 	else
 	{
 		GetController()->SetControlRotation(springArm->GetRelativeRotation());
-		CurrentControlMode = EControlMode::GTA;
+		CurrentControlMode = (int32)EControlMode::GTA;
 	}
 
 	//이런것도 있는데 뭐... 알면 좋고몰라도 ㄱㅊ
@@ -189,7 +190,7 @@ void AABCharacter::ViewChange()
 void AABCharacter::Turn(float NewAxisValue)
 {
 	//AddControllerYawInput(NewAxisValue);
-	if (CurrentControlMode == EControlMode::GTA)
+	if (CurrentControlMode == (int32)EControlMode::GTA)
 	{
 		AddControllerYawInput(NewAxisValue);
 	}
