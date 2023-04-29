@@ -34,7 +34,7 @@ AABCharacter::AABCharacter()
 	}
 
 
-	SetControlMode(0);
+	SetControlMode(EControlMode::DIABLO);
 
 }
 
@@ -45,9 +45,10 @@ void AABCharacter::BeginPlay()
 	
 }
 
-void AABCharacter::SetControlMode(int32 ControlMode)
+void AABCharacter::SetControlMode(EControlMode ControlMode)
 {
-	if (0 == ControlMode)
+	CurrentControlMode = ControlMode;
+	if (EControlMode::GTA == CurrentControlMode)
 	{
 		springArm->TargetArmLength = 450.f;
 		springArm->SetRelativeRotation(FRotator::ZeroRotator);
@@ -58,18 +59,46 @@ void AABCharacter::SetControlMode(int32 ControlMode)
 		springArm->bDoCollisionTest = true;
 		bUseControllerRotationYaw = false;
 		GetCharacterMovement()->bOrientRotationToMovement = true;
+		GetCharacterMovement()->bUseControllerDesiredRotation = false;
 		GetCharacterMovement()->RotationRate = FRotator(0.f, 720.f, 0.f);
 	}
+	else
+	{
+		springArm->TargetArmLength = 800.f;
+		springArm->SetRelativeRotation(FRotator(-45.f, 0.f, 0.f));
+		springArm->bUsePawnControlRotation = false;
+		//위 애를 false 시켜놓아서 밑에 애들은 사실 영향 안받음
+		//근데 그냥 해놓는게 국룰이라 글케한듯
+		springArm->bInheritPitch = false;
+		springArm->bInheritRoll = false;
+		springArm->bInheritYaw = false;
+		springArm->bDoCollisionTest = false;
+		bUseControllerRotationYaw = false;
+		GetCharacterMovement()->bOrientRotationToMovement = false;
+		GetCharacterMovement()->bUseControllerDesiredRotation = true;
+		GetCharacterMovement()->RotationRate = FRotator(0.0f,720.f,0.f);
+	}
+
+	/*
+	bUsePawnControlRotation &&bInheritYaw ==1 로 두면 카메라가 막
+딱딱하게 회전함. 아마 tick 함수에서 회전방향과 움직임을 결정하면서
+방향 바뀌는거에 카메라가 영향받아서 그런듯. 
+	*/
 }
 
-void AABCharacter::SetControlMode(EControlMode mode)
-{
-}
 
 // Called every frame
 void AABCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (CurrentControlMode == EControlMode::DIABLO)
+	{
+		if (DirectionToMove.SizeSquared() > 0.f)
+		{
+			GetController()->SetControlRotation(FRotationMatrix::MakeFromX(DirectionToMove).Rotator());
+			AddMovementInput(DirectionToMove);
+		}
+	}
 
 }
 
@@ -82,30 +111,76 @@ void AABCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &AABCharacter::Turn);
 	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &AABCharacter::LookUp);
 
+	PlayerInputComponent->BindAction(TEXT("ViewChange"),EInputEvent::IE_Pressed, this, &AABCharacter::ViewChange);
+
 }
 
 void AABCharacter::UpDown(float NewAxisValue)
 {
 	//ABLOG(Warning, TEXT("pawn UpDown %f"), NewAxisValue);
 	//AddMovementInput(GetActorForwardVector(), NewAxisValue);
-	AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::X), NewAxisValue);
+	//AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::X), NewAxisValue);
+
+	if (CurrentControlMode == EControlMode::GTA)
+	{
+		AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::X), NewAxisValue);
+	}
+	else if (CurrentControlMode == EControlMode::DIABLO)
+	{
+		DirectionToMove.X = NewAxisValue;
+	}
 }
 
 void AABCharacter::LeftRight(float NewAxisValue)
 {
 	//ABLOG(Warning, TEXT("pawn LeftRight %f"), NewAxisValue);
 	//AddMovementInput(GetActorRightVector(), NewAxisValue);
-	AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::Y), NewAxisValue);
+	//AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::Y), NewAxisValue);
+	if (CurrentControlMode == EControlMode::GTA)
+	{
+		AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::Y), NewAxisValue);
+	}
+	else if (CurrentControlMode == EControlMode::DIABLO)
+	{
+		DirectionToMove.Y = NewAxisValue;
+	}
+
 }
 
 
 
 void AABCharacter::LookUp(float NewAxisValue)
 {
-	AddControllerPitchInput(-NewAxisValue);
+	//AddControllerPitchInput(-NewAxisValue);
+
+	if (CurrentControlMode == EControlMode::GTA)
+	{
+		AddControllerPitchInput(-NewAxisValue);
+	}
+
+}
+
+void AABCharacter::ViewChange()
+{
+	if (CurrentControlMode == EControlMode::GTA)
+	{
+		CurrentControlMode = EControlMode::DIABLO;
+	}
+	else
+	{
+		CurrentControlMode = EControlMode::GTA;
+	}
+
+	//이런것도 있는데 뭐... 알면 좋고몰라도 ㄱㅊ
+	//CurrentControlMode = CurrentControlMode == EControlMode::GTA ? EControlMode::DIABLO : EControlMode::GTA;
+	SetControlMode(CurrentControlMode);
 }
 
 void AABCharacter::Turn(float NewAxisValue)
 {
-	AddControllerYawInput(NewAxisValue);
+	//AddControllerYawInput(NewAxisValue);
+	if (CurrentControlMode == EControlMode::GTA)
+	{
+		AddControllerYawInput(NewAxisValue);
+	}
 }
