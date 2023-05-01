@@ -34,9 +34,30 @@ AABCharacter::AABCharacter()
 	glider->SetRelativeLocation(FVector(30, 0.f, 170.f));
 	glider->SetRelativeRotation(FRotator(0,-90,30));
 	light->SetRelativeLocation(FVector(0.f, 0.f, 50.f));
+	//사운드
+	static ConstructorHelpers::FObjectFinder<USoundBase> SC_Wind(TEXT("SoundCue'/Game/Book/wind/NewSoundCue.NewSoundCue'"));
+	if (SC_Wind.Succeeded())
+	{
+		WindSound = SC_Wind.Object;
+		wind = CreateDefaultSubobject<UAudioComponent>(TEXT("WIND"));
+		wind->SetupAttachment(RootComponent);
+		wind->SetSound(WindSound);
 
 
-	/////////////
+		//나중에 왼오 소리 나게 해보자
+	}
+
+
+
+
+
+
+
+
+
+	//////////
+
+	//////////
 	GetMesh()->SetRelativeLocationAndRotation(FVector(.0f, 0.0f, -88.0f), FRotator(0.0f, -90.0f, 0.0f));
 	//static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_CARDBOARD(TEXT("SkeletalMesh'/Game/Book/animation/ds.ds'"));
 	//if (SK_CARDBOARD.Succeeded())

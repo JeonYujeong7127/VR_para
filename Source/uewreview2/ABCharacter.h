@@ -54,6 +54,14 @@ public:
 		UStaticMeshComponent* glider;
 	UPROPERTY(VisibleAnywhere, Category = Light)
 		UPointLightComponent* light;
+	UPROPERTY(VisibleAnywhere, Category = Light)
+		UAudioComponent* wind;
+private:
+
+	UPROPERTY(Category = Sound, EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		USoundBase* WindSound;
+	
+
 
 
 private:
