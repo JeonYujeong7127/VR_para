@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "ABCharacter.generated.h"
 
+
 UCLASS()
 class UEWREVIEW2_API AABCharacter : public ACharacter
 {
@@ -54,12 +55,25 @@ public:
 		UStaticMeshComponent* glider;
 	UPROPERTY(VisibleAnywhere, Category = Light)
 		UPointLightComponent* light;
-	UPROPERTY(VisibleAnywhere, Category = Light)
-		UAudioComponent* wind;
+	UPROPERTY(VisibleAnywhere, Category = Sound)
+		UAudioComponent* windsound;
+
+	UPROPERTY(VisibleAnywhere, Category = Particle)
+		UParticleSystemComponent* windPtc;
+
+
+	UPROPERTY(VisibleAnywhere, Category = Particle)
+		UParticleSystemComponent* windPtc2;
+
+
+	//UPROPERTY(VisibleAnywhere, Category = Particle)
+	//	UNiagaraComponent* windPtc;
+	
 private:
 
 	UPROPERTY(Category = Sound, EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-		USoundBase* WindSound;
+		USoundBase* WindSoundBase;
+	
 	
 
 

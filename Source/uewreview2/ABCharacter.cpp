@@ -13,14 +13,30 @@ AABCharacter::AABCharacter()
 	camera = CreateDefaultSubobject< UCameraComponent>(TEXT("CAMERA"));
 	glider = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GLIDER"));
 	light = CreateDefaultSubobject<UPointLightComponent>(TEXT("LIGHT"));
+	windPtc = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("WINDPTC"));
+	windPtc2 = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("WINDPTC2"));
 
 	springArm->SetupAttachment(GetCapsuleComponent());
 	camera->SetupAttachment(springArm);
 	glider->SetupAttachment(GetCapsuleComponent());
 	light->SetupAttachment(GetCapsuleComponent());
+	windPtc->SetupAttachment(RootComponent);
+	windPtc2->SetupAttachment(RootComponent);
+
 	light->SetLightBrightness(50);
 
+	windPtc->SetRelativeLocation(FVector(1000.f, 400.f, 30.f));
+	windPtc2->SetRelativeLocation(FVector(1000.f, -400.f, 30.f));
 
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> P_WIND(TEXT("ParticleSystem'/Game/Book/P_Windparticle.P_Windparticle'"));
+	if (P_WIND.Succeeded())
+	{
+		windPtc->SetTemplate(P_WIND.Object);
+		windPtc2->SetTemplate(P_WIND.Object);
+	}
+	/*
+	ParticleSystem'/Game/Book/P_Windparticle.P_Windparticle'
+	*/
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_BODY(TEXT("StaticMesh'/Game/Book/glider/Hang_gliding_3.Hang_gliding_3'"));
 	if (SM_BODY.Succeeded())
 	{
@@ -38,12 +54,10 @@ AABCharacter::AABCharacter()
 	static ConstructorHelpers::FObjectFinder<USoundBase> SC_Wind(TEXT("SoundCue'/Game/Book/wind/NewSoundCue.NewSoundCue'"));
 	if (SC_Wind.Succeeded())
 	{
-		WindSound = SC_Wind.Object;
-		wind = CreateDefaultSubobject<UAudioComponent>(TEXT("WIND"));
-		wind->SetupAttachment(RootComponent);
-		wind->SetSound(WindSound);
-
-
+		WindSoundBase = SC_Wind.Object;
+		windsound = CreateDefaultSubobject<UAudioComponent>(TEXT("WIND"));
+		windsound->SetupAttachment(RootComponent);
+		windsound->SetSound(WindSoundBase);
 		//나중에 왼오 소리 나게 해보자
 	}
 
