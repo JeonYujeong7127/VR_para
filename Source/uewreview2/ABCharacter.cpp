@@ -25,8 +25,8 @@ AABCharacter::AABCharacter()
 
 	light->SetLightBrightness(50);
 
-	windPtc->SetRelativeLocation(FVector(1000.f, 400.f, 30.f));
-	windPtc2->SetRelativeLocation(FVector(1000.f, -400.f, 30.f));
+	windPtc->SetRelativeLocation(FVector(2000.f, 400.f, 30.f));
+	windPtc2->SetRelativeLocation(FVector(2000.f, -400.f, 30.f));
 
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> P_WIND(TEXT("ParticleSystem'/Game/Book/P_Windparticle.P_Windparticle'"));
 	if (P_WIND.Succeeded())
@@ -60,8 +60,12 @@ AABCharacter::AABCharacter()
 		windsound->SetSound(WindSoundBase);
 		//나중에 왼오 소리 나게 해보자
 	}
-
-
+	//static ConstructorHelpers::FObjectFinder<UNiagaraSystem> NIA_Wind(TEXT("NiagaraSystem'/Game/Book/NS_windrun.NS_windrun'"));
+	//if (NIA_Wind.Succeeded())
+	//{
+	//	windNia = NIA_Wind.Object;
+	//	
+	//}
 
 
 
@@ -90,6 +94,9 @@ AABCharacter::AABCharacter()
 
 
 	SetControlMode((int32)EControlMode::GLIDER);
+
+	GetCharacterMovement()->JumpZVelocity = 400.f;
+	//JumpMaxCount = 10;
 
 }
 
@@ -175,8 +182,10 @@ void AABCharacter::Tick(float DeltaTime)
 			AddMovementInput(DirectionToMove);
 		}
 	}
+	//windNia->Play
 
 }
+
 
 // Called to bind functionality to input
 void AABCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -186,6 +195,7 @@ void AABCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAxis(TEXT("LeftRight"), this, &AABCharacter::LeftRight);
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &AABCharacter::Turn);
 	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &AABCharacter::LookUp);
+	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed,this, &AABCharacter::Jump);
 
 	PlayerInputComponent->BindAction(TEXT("ViewChange"),EInputEvent::IE_Pressed, this, &AABCharacter::ViewChange);
 
@@ -229,8 +239,18 @@ void AABCharacter::LeftRight(float NewAxisValue)
 	}
 	else
 	{
+		if (CurrentControlMode != (int32)EControlMode::DIABLO)
+		{
+			static float Ayaw = 0.f;
+			Ayaw = abs(GetActorRotation().Yaw - (GetControlRotation().Yaw + NewAxisValue));
 
-		AddMovementInput(GetActorRightVector(), NewAxisValue);
+			if (Ayaw < 45 || 225 < Ayaw)
+			{
+				AddMovementInput(GetActorRightVector(), NewAxisValue);
+			}
+
+
+		}
 	}
 
 }
@@ -274,10 +294,10 @@ void AABCharacter::ViewChange()
 
 void AABCharacter::Turn(float NewAxisValue)
 {
-	static float Ayaw = 0.f;
 	//AddControllerYawInput(NewAxisValue);
 	if (CurrentControlMode != (int32)EControlMode::DIABLO)
 	{
+		static float Ayaw = 0.f;
 		Ayaw = abs(GetActorRotation().Yaw - (GetControlRotation().Yaw + NewAxisValue));
 
 		if ( Ayaw<90 || 270 < Ayaw )

@@ -4,8 +4,8 @@
 
 #include "uewreview2.h"
 #include "GameFramework/Character.h"
+#include "NiagaraComponent.h"
 #include "ABCharacter.generated.h"
-//#include "NiagaraComponent.h"
 
 UCLASS()
 class UEWREVIEW2_API AABCharacter : public ACharacter
@@ -66,8 +66,8 @@ public:
 		UParticleSystemComponent* windPtc2;
 
 
-	//UPROPERTY(VisibleAnywhere, Category = Particle)
-	//	UNiagara* windPtc;
+	UPROPERTY(VisibleAnywhere, Category = Particle)
+		UNiagaraSystem* windNia;
 	
 private:
 
