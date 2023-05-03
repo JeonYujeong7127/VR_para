@@ -51,7 +51,7 @@ AABCharacter::AABCharacter()
 	glider->SetRelativeRotation(FRotator(0,-90,30));
 	light->SetRelativeLocation(FVector(0.f, 0.f, 50.f));
 	//»ç¿îµå
-	static ConstructorHelpers::FObjectFinder<USoundBase> SC_Wind(TEXT("SoundCue'/Game/Book/wind/NewSoundCue.NewSoundCue'"));
+	static ConstructorHelpers::FObjectFinder<USoundBase> SC_Wind(TEXT("/Script/Engine.SoundCue'/Game/Book/wind/SQ_Wind.SQ_Wind'"));
 	if (SC_Wind.Succeeded())
 	{
 		WindSoundBase = SC_Wind.Object;
